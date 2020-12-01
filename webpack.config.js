@@ -5,6 +5,10 @@ const {
 const { DefinePlugin } = require('webpack');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 
+const moduleOverridePlugin = require('./moduleOverrideWebpackPlugin'); 
+
+const componentOverrideMapping = require('./componentOverrideMapping'); 
+
 module.exports = async env => {
     const mediaUrl = await getMediaURL();
     const storeConfigData = await getStoreConfigData();
@@ -32,6 +36,22 @@ module.exports = async env => {
         special: {
             'react-feather': {
                 esModules: true
+            },
+             // Treat code originating in the `@magento/peregrine` module
+            // as ES Modules, just like the project source itself.
+            '@magento/peregrine': {
+                esModules: true
+            },
+            // Treat code originating in the `@magento/venia-ui` as though
+            // it uses ES Modules, CSS Modules, GraphQL queries, RootComponents,
+            // and UPWARD definitions. This is the right set of flags for a UI
+            // library that makes up the bulk of your project.
+            '@magento/venia-ui': {
+                cssModules: true,
+                esModules: true,
+                graphqlQueries: true,
+                rootComponents: true,
+                upward: true
             }
         },
         env
@@ -68,6 +88,8 @@ module.exports = async env => {
             }
         })
     ];
+
+    config.plugins.push(new moduleOverridePlugin(componentOverrideMapping));
 
     return config;
 };

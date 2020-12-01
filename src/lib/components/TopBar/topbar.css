@@ -1,0 +1,8 @@
+.root {
+  background-color: rgb(27, 37, 44);
+  padding: 0.5rem;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+}
+
